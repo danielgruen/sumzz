@@ -36,6 +36,7 @@ before_script: # configure a headless display to test plot generation
 
 script:
     - make
+    - echo $GITHUB_API_KEY
 
 after_success: |
     if [[ "$PYTHON_VERSION" == "2.7" ]] && [ -n "$GITHUB_API_KEY" ]; then
