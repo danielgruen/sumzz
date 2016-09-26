@@ -2,8 +2,7 @@
 
 How should we properly combine the photometric redshift PDFs of galaxies?
 
-**Read our [research notes](https://github.com/danielgruen/sumzz/blob/master/sumzz.tex) as we think about this.**
-
+**Read our [research notes](https://github.com/cpadavis/sumzz/blob/pdf/sumzz.pdf) as we think about this.**
 
 ## Credits, Contact etc
 
