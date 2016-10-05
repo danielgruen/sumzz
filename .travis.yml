@@ -1,0 +1,26 @@
+sudo: false
+
+language: python
+
+addons:
+    apt:
+        packages:
+            - texlive-latex-recommended
+            - texlive-latex-extra
+            - texlive-fonts-recommended
+            - texlive-fonts-extra
+            - dvipng
+
+install:
+
+script:
+    - make
+
+after_success: |
+    if [ -n "$GITHUB_API_KEY" ]; then
+        git checkout --orphan pdf
+        git rm -rf .
+        git add -f sumzz.pdf
+        git -c user.name='travis' -c user.email='travis' commit -m init
+        git push -q -f https://cpadavis:$GITHUB_API_KEY@github.com/danielgruen/sumzz pdf
+    fi

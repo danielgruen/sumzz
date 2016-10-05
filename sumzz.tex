@@ -9,10 +9,12 @@
 \usepackage{natbib}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
+
 \title{How should we combine the posterior PDFs for the photometric redshifts of individual galaxies?}
 
 \author{Daniel Gruen, Phil Marshall and Chris Davis}
 \date{\today}
+
 
 \begin{document}
 \maketitle
@@ -42,12 +44,19 @@ it includes photometric measurements and their uncertainties.
 All of these quatities come with a subscript $i$ for galaxy $i$ in the sky.
 %, and we denote the set of all possible $a$ as $A$.
 
-Additionally, in a Bayesian hierarchical scheme where the redshift
-distribution of galaxies is modeled explicitly with assumptions $H$,
-there is a vector of hyperparameters $h$ that determines $P(z,a|h,H)$.
+We imagine that there is a ``true model,'' with some unknown
+parametrization, that can be thought of as having generated the data we
+have. The goal in inference is to learn this model and its parameters.
+However, in practice we do not have access to $T$, and so have to be
+satisfied with assuming a model $M$ for any particular galaxy's redshift
+and type, or better, a hierarchical model $H$ that describes the whole
+population of galaxies. The parameters of $M$ include $a$, and also any
+latent variables~$m$.  In a Bayesian hierarchical scheme, the redshift
+distribution of galaxies is modeled explicitly, via assumptions $H$ and
+a vector of hyperparameters $h$ that determines $P(z,a|h,H)$.
+
 % , and because we don't know the true $h$ the two always appear
 % together as $P(a,h)$. For now, assume we know the true $H$.
-
 
 \section{Individual galaxy posteriors $P(z_i|d_i,M)$}
 
@@ -90,9 +99,9 @@ distribution, $P(z|T)$.
 
 The following is an equality
 \begin{equation}
-p_D(z|T) = P(z|d\in D, T) = \int_{D} P(z_i|d_i, H) P(d_i|H) / P(d\in D|H) \; d d_i
+P_D(z|T) = P(z|d\in D, T) = \int_{D} P(z_i|d_i, T) P(d_i|T) / P(d\in D|T) \; d d_i
 \end{equation}
-The factor $P(d|H)/P(d\in D|H)$ just serves to keep things normalized. It's the PDF for data $d$ for galaxies in $D$ given the ``true model'' $T$. In the limit of many galaxies $i=1,...,N_g$ that sample this PDF,
+The factor $P(d|T)/P(d\in D|T)$ just serves to keep things normalized. It's the PDF for data $d$ for galaxies in $D$ given the ``true model'' $T$. In the limit of many galaxies $i=1,...,N_g$ that sample this PDF,
 \begin{equation}
 \int_{D} P(z_i|d_i,T) P(d_i|T) / P(d\in D|T) \; d d_i \approx \frac{1}{N_g} \sum_{i=1}^{N_g} P(z_i | d_i, T) \; ,
 \end{equation}
@@ -128,8 +137,8 @@ In the previous section, the noiseless observables (or latent variables) $a$ did
 
 What if we assume a model $H$ that is not the true model $T$? We can write down $P(a|h,H)$ and $P(h|H)$, and the individual galaxy posterior PDF becomes
 \begin{align}
-P(z_i | d_i, H) &= \int_{A}\int_{H} P(z_i|a_i) P(a_i|d_i,h) P(h) \; da_i\; dh \\
-                &= \int_{A}\int_{H} P(z_i|a_i) P(a_i|h) P(h) P(d_i|a_i,h) / P(d_i) \; da_i \; dh \; .
+P(z_i | d_i, H) &= \int\int P(z_i|a_i) P(a_i|d_i,h,H) P(h|H) \; da_i\; dh \\
+                &= \int\int P(z_i|a_i) P(a_i|h,H) P(h|H) P(d_i|a_i,h,H) / P(d_i|H) \; da_i \; dh \; .
 \end{align}
 
 Because $P(a,h)=P(a|h)P(h)$ and $P(d_i|a,h)$ depend on $h$, this PDF
@@ -182,14 +191,21 @@ Our goal, then, is to characterize the posterior PDF for $h$:
 \begin{equation}
    P(h|d,H) = P(h|H) \int \prod_i P(d_i|z_i,H) P(z_i|h,H) / P(d_i|H) dz_i
 \end{equation}
-where we have assumed the independence of all our datasets. The following derivation follows \citep{ForemanMackeyEtal2014}, culminating in the same ``importance sampling trick.'' Further discussion of its application to the photometric redshift problem can be found in Malz et al (in preparation).\footnote{https://github.com/aimalz/prob-z}
+where we have assumed the independence of all our datasets. The
+following derivation follows \citep{ForemanMackeyEtal2014}, culminating
+in the same ``importance sampling trick.'' Further discussion of its
+application to the photometric redshift problem can be found in Malz et
+al (in preparation).\footnote{https://github.com/aimalz/prob-z}
 
 The giant integral in the above equation is separable, and so we can write the integral of the product as a product of integrals:
 \begin{equation}
    P(h|d,H) = P(h|H)/Z_H \prod_i \left[ \int P(d_i|z_i,H) P(z_i|h,H)  dz_i \right],
 \end{equation}
 where the normalization constant $Z_H = \prod_i P(d_i|H)$.
-What our Bayesian collaborator provides us with is an ensemble of posterior PDFs $P(z_i|d_i,M)$ obtained under the assumption of some other model, $M$. If we insert each one into the numerator and denominator of the appropriate integrand we get
+What our Bayesian collaborator provides us with is an ensemble of
+posterior PDFs $P(z_i|d_i,M)$ obtained under the assumption of some
+other model, $M$. If we insert each one into the numerator and
+denominator of the appropriate integrand we get
 \begin{equation}
    \int P(d_i|z_i,H) P(z_i|h,H)  dz_i = \int \frac{P(d_i|z_i,H) P(z_i|h,H)}{P(z_i|d_i,M)} P(z_i|d_i,M) dz_i
 \end{equation}
@@ -237,8 +253,8 @@ expect to encounter in practice:
 In general, the photometric data will depend on the template (or galaxy
 type) $t$ as well as the redshift, which means computing the
 (marginalized) likelihood term is not easy. A better solution would be
-to be given the value of the log prior [$P(z_i^k,t_i|M)$] along with
-each sample's redshift and type. In this case, we can write
+to be given the value of the log prior [$\log P(z_i^k,t_i|M)$] along
+with each sample's redshift and type. In this case, we can write
 \begin{align}
    w_i^k &= \frac{P(d_i|z_i^k) P(z_i^k|h,H)} {P(z_i^k|d_i,M)}, \\
          &\propto \frac{P(z_i^k,t_i^k|h,H)} {P(z_i^k,t_i^k|M)}
@@ -247,7 +263,9 @@ Here, the likelihood term has cancelled out, and we are left with
 weights that are simply ratios of the ``interim'' prior (applied by the
 photometric redshift code) and the hierarchical prior. We divide out the
 former and then apply the latter, in what can now be seen to be an
-importance sampling approach.
+importance sampling approach. Note that to be able to compute this, we
+need posterior samples in $t_i$ as well as $z_i$, and the log interim
+prior values as well.
 
 
 
