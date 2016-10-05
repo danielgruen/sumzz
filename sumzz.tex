@@ -11,6 +11,7 @@
 
 
 \title{How should we combine the posterior PDFs for the photometric redshifts of individual galaxies?}
+\shorttitle{Combining galaxy redshift posterior PDFs}
 
 \author{Daniel Gruen, Phil Marshall and Chris Davis}
 \date{\today}
@@ -296,8 +297,8 @@ prior values as well.
     hyperparameters $h$ be inferred using a double sum over galaxies and
     their weighted posterior samples,   $\log P(h|d,H) = \log P(h|H) +
     \sum_{i=1}^{N_g} \log \sum_{k=1}^{N_s} w_i^k + {\rm const,}$ where
-    each weight is the ratio of the model redshift distribution and the
-    ``interim'' prior assigned to the resdhift and type during the
+    each weight is the ratio of the model distribution for the redshift (and other observables), and the
+    ``interim'' prior assigned to the galaxy parameters (including the redshift) during the
     photometric code execution.
 
     \item The hierarchical inference above requires posterior photo-z
