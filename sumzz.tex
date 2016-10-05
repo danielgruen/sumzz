@@ -34,7 +34,7 @@ these assumptions.
 
 First, some definitions:
 \begin{itemize}
-\item Let $a$ be a vector of parameters describing the true, noiseless
+\item Let $a$ be a vector of parameters determining the true, noiseless
 observable properties of a galaxy; if you know $a$, you know everything
 there is to know about the galaxy, including its redshift, which can therefore be written as $z(a)$.
 \item Let $z$ be the true redshift of a galaxy.
@@ -250,21 +250,31 @@ expect to encounter in practice:
     of computing the likelihood $P(d_i|z_i^k)$.
 \end{enumerate}
 
-In general, the photometric data will depend on the template (or galaxy
-type) $t$ as well as the redshift, which means computing the
+In general, the photometric data will depend on 
+%the template (or galaxy
+%type) $t$ as well as the redshift, 
+all observable intrinsic properties of the galaxy in addition to its redshift,
+which means computing the
 (marginalized) likelihood term is not easy. A better solution would be
-to be given the value of the log prior [$\log P(z_i^k,t_i|M)$] along
-with each sample's redshift and type. In this case, we can write
+to be given the value of the log prior 
+%[$\log P(z_i^k,t_i|M)$] 
+[$\log P(a_i^k|M)$]
+along 
+%with each sample's redshift and type. 
+with the full set of galaxy properties $a_i$ required to model the galaxy photometry for each sample. 
+Recall that $a_i$ fully describes the galaxy in the framework of the model. 
+
+In this case, we can write
 \begin{align}
-   w_i^k &= \frac{P(d_i|z_i^k) P(z_i^k|h,H)} {P(z_i^k|d_i,M)}, \\
-         &\propto \frac{P(z_i^k,t_i^k|h,H)} {P(z_i^k,t_i^k|M)}
+   w_i^k &= \frac{P(d_i|a_i^k) P(a_i^k|h,H)} {P(a_i^k|d_i,M)}, \\
+         &\propto \frac{P(a_i^k|h,H)} {P(a_i^k|M)}
 \end{align}
 Here, the likelihood term has cancelled out, and we are left with
 weights that are simply ratios of the ``interim'' prior (applied by the
 photometric redshift code) and the hierarchical prior. We divide out the
 former and then apply the latter, in what can now be seen to be an
 importance sampling approach. Note that to be able to compute this, we
-need posterior samples in $t_i$ as well as $z_i$, and the log interim
+need posterior samples of $a_i$ (of which $z_i$ is an element), and the log interim
 prior values as well.
 
 
